@@ -103,6 +103,8 @@ export default function WorkoutMode({ session, onComplete, onExit }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [elapsedSec, setElapsedSec] = useState(0);
   const [cooldownStep, setCooldownStep] = useState(0);
+  const [currentSet, setCurrentSet] = useState(1);
+  const [setSubPhase, setSetSubPhase] = useState<"ready" | "active" | "resting">("ready");
   const startTimeRef = useRef<Date | null>(null);
 
   // Elapsed timer
@@ -126,21 +128,38 @@ export default function WorkoutMode({ session, onComplete, onExit }: Props) {
 
   function startWorkout() {
     startTimeRef.current = new Date();
+    setCurrentSet(1);
+    setSetSubPhase("ready");
     setPhase("exercise");
   }
 
-  function finishExercise() {
-    if (!currentItem) return;
-    setCurrentFeedback({
-      exerciseId: currentItem.exercise.id,
-      avgRpe: session.targetRpe,
-      completedSets: currentItem.sets,
-      completedReps: currentItem.repsMax,
-      difficulty: "JUST_RIGHT",
-      notes: ""
-    });
-    setPhase("feedback");
+  function startSet() {
+    setSetSubPhase("active");
   }
+
+  function finishSet() {
+    if (!currentItem) return;
+    if (currentSet < currentItem.sets) {
+      // More sets to go → rest between sets
+      setSetSubPhase("resting");
+    } else {
+      // All sets done → feedback
+      setCurrentFeedback({
+        exerciseId: currentItem.exercise.id,
+        avgRpe: session.targetRpe,
+        completedSets: currentItem.sets,
+        completedReps: currentItem.repsMax,
+        difficulty: "JUST_RIGHT",
+        notes: ""
+      });
+      setPhase("feedback");
+    }
+  }
+
+  const handleSetRestComplete = useCallback(() => {
+    setCurrentSet((prev) => prev + 1);
+    setSetSubPhase("active"); // auto-start next set
+  }, []);
 
   function submitExerciseFeedback() {
     if (!currentFeedback) return;
@@ -154,6 +173,8 @@ export default function WorkoutMode({ session, onComplete, onExit }: Props) {
 
   const handleRestComplete = useCallback(() => {
     setCurrentIndex((prev) => prev + 1);
+    setCurrentSet(1);
+    setSetSubPhase("ready");
     setPhase("exercise");
   }, []);
 
@@ -260,6 +281,60 @@ export default function WorkoutMode({ session, onComplete, onExit }: Props) {
 
   /* ═════════════ EXERCISE ═════════════ */
   if (phase === "exercise" && currentItem) {
+    const repsLabel =
+      currentItem.repsMin === currentItem.repsMax
+        ? `${currentItem.repsMax}`
+        : `${currentItem.repsMin}–${currentItem.repsMax}`;
+
+    /* ── Between-set rest countdown (big & central) ── */
+    if (setSubPhase === "resting") {
+      return (
+        <div className="min-h-[100dvh] flex flex-col bg-[#0a0f1a]">
+          <header className="px-4 pt-4 pb-2">
+            <div className="mx-auto max-w-lg">
+              <div className="flex items-center justify-between mb-3">
+                <button type="button" onClick={onExit} className="btn-ghost text-sm -ml-2">
+                  ✕ Beenden
+                </button>
+                <span className="text-sm text-slate-400 font-mono tabular-nums">
+                  {formatTime(elapsedSec)}
+                </span>
+              </div>
+              <div className="progress-bar">
+                <div
+                  className="progress-bar-fill"
+                  style={{ width: `${((currentIndex + 1) / totalExercises) * 100}%` }}
+                />
+              </div>
+            </div>
+          </header>
+
+          <div className="flex-1 flex flex-col items-center justify-center p-4">
+            <h2 className="text-xl font-bold mb-1">{currentItem.exercise.name}</h2>
+            <p className="text-sm text-slate-400 mb-10">
+              Satz {currentSet} von {currentItem.sets} geschafft ✓
+            </p>
+
+            <RestTimer
+              key={`set-rest-${currentIndex}-${currentSet}`}
+              seconds={currentItem.restSec}
+              onComplete={handleSetRestComplete}
+              large
+            />
+
+            <div className="mt-12 glass p-5 text-center w-full max-w-xs">
+              <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Nächster Satz</p>
+              <p className="text-2xl font-bold gradient-text">
+                Satz {currentSet + 1} von {currentItem.sets}
+              </p>
+              <p className="text-sm text-slate-400 mt-1">{repsLabel} Wiederholungen</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ── Ready (press Start) / Active (press Fertig) ── */
     return (
       <div className="min-h-[100dvh] flex flex-col bg-[#0a0f1a]">
         <header className="px-4 pt-4 pb-2">
@@ -284,11 +359,11 @@ export default function WorkoutMode({ session, onComplete, onExit }: Props) {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-4 pb-32 flex items-start justify-center">
+        <div className="flex-1 overflow-y-auto p-4 pb-8">
           <div className="mx-auto max-w-lg w-full animate-fade-in" key={currentIndex}>
             {/* Exercise visual */}
             {currentItem.exercise.sketchUrl && (
-              <div className="mb-5 rounded-2xl overflow-hidden bg-white/5 aspect-video flex items-center justify-center relative">
+              <div className="mb-4 rounded-2xl overflow-hidden bg-white/5 aspect-video flex items-center justify-center relative">
                 <Image
                   src={currentItem.exercise.sketchUrl}
                   alt={currentItem.exercise.name}
@@ -299,30 +374,65 @@ export default function WorkoutMode({ session, onComplete, onExit }: Props) {
               </div>
             )}
 
-            <div className="text-center mb-5">
+            <div className="text-center mb-4">
               <h1 className="text-2xl font-bold">{currentItem.exercise.name}</h1>
               <p className="text-sm text-slate-400 mt-1">{currentItem.exercise.primaryMuscle}</p>
             </div>
 
-            {/* Sets & Reps */}
-            <div className="grid grid-cols-3 gap-3 mb-5">
-              <div className="glass p-4 text-center">
-                <p className="text-3xl font-bold gradient-text">{currentItem.sets}</p>
-                <p className="text-xs text-slate-500 mt-1">Sätze</p>
-              </div>
-              <div className="glass p-4 text-center">
-                <p className="text-3xl font-bold gradient-text">
-                  {currentItem.repsMin === currentItem.repsMax
-                    ? currentItem.repsMax
-                    : `${currentItem.repsMin}-${currentItem.repsMax}`}
-                </p>
-                <p className="text-xs text-slate-500 mt-1">Wdh</p>
-              </div>
-              <div className="glass p-4 text-center">
-                <p className="text-3xl font-bold gradient-text">{currentItem.restSec}</p>
-                <p className="text-xs text-slate-500 mt-1">Sek Pause</p>
-              </div>
+            {/* Set progress dots */}
+            <div className="flex justify-center gap-3 mb-2">
+              {Array.from({ length: currentItem.sets }, (_, i) => (
+                <div
+                  key={i}
+                  className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                    i < currentSet - 1
+                      ? "bg-green-500 shadow-lg shadow-green-500/40"
+                      : i === currentSet - 1
+                        ? "bg-brand-500 ring-4 ring-brand-500/20 shadow-lg shadow-brand-500/30"
+                        : "bg-white/10"
+                  }`}
+                />
+              ))}
             </div>
+            <p className="text-center text-sm text-slate-400 mb-6">
+              Satz {currentSet} von {currentItem.sets} · {repsLabel} Wdh
+            </p>
+
+            {/* ── Big Central Round Button ── */}
+            <div className="flex justify-center my-8">
+              {setSubPhase === "ready" ? (
+                <button
+                  type="button"
+                  onClick={startSet}
+                  className="w-36 h-36 rounded-full bg-gradient-to-br from-brand-500 to-brand-600
+                    flex items-center justify-center text-white text-2xl font-bold uppercase tracking-widest
+                    shadow-[0_0_40px_rgba(56,130,255,0.4)]
+                    hover:shadow-[0_0_60px_rgba(56,130,255,0.6)] hover:scale-105
+                    active:scale-95 transition-all duration-200
+                    ring-4 ring-brand-400/20"
+                >
+                  Start
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={finishSet}
+                  className="w-36 h-36 rounded-full bg-gradient-to-br from-green-500 to-emerald-600
+                    flex items-center justify-center text-white text-2xl font-bold uppercase tracking-widest
+                    shadow-[0_0_40px_rgba(34,197,94,0.4)]
+                    hover:shadow-[0_0_60px_rgba(34,197,94,0.6)] hover:scale-105
+                    active:scale-95 transition-all duration-200
+                    ring-4 ring-green-400/20"
+                >
+                  Fertig ✓
+                </button>
+              )}
+            </div>
+
+            {/* Rest & rep info */}
+            <p className="text-center text-xs text-slate-600 mb-6">
+              {currentItem.restSec}s Pause zwischen Sätzen
+            </p>
 
             {/* Science note */}
             <div className="glass p-3 mb-3">
@@ -335,14 +445,6 @@ export default function WorkoutMode({ session, onComplete, onExit }: Props) {
             {currentItem.exercise.videoUrl && (
               <YouTubePlayer videoUrl={currentItem.exercise.videoUrl} />
             )}
-          </div>
-        </div>
-
-        <div className="fixed bottom-0 inset-x-0 bg-[#0a0f1a]/90 backdrop-blur-xl border-t border-white/5 p-4 safe-bottom">
-          <div className="mx-auto max-w-lg">
-            <button type="button" className="btn-primary w-full py-4" onClick={finishExercise}>
-              Übung abgeschlossen ✓
-            </button>
           </div>
         </div>
       </div>

@@ -5,9 +5,10 @@ import { useState, useEffect, useCallback } from "react";
 type Props = {
   seconds: number;
   onComplete: () => void;
+  large?: boolean;
 };
 
-export default function RestTimer({ seconds, onComplete }: Props) {
+export default function RestTimer({ seconds, onComplete, large = false }: Props) {
   const [timeLeft, setTimeLeft] = useState(seconds);
 
   const handleComplete = useCallback(() => {
@@ -24,28 +25,31 @@ export default function RestTimer({ seconds, onComplete }: Props) {
   }, [timeLeft, handleComplete]);
 
   const progress = timeLeft / seconds;
-  const radius = 54;
+  const svgSize = large ? 220 : 140;
+  const radius = large ? 90 : 54;
+  const strokeW = large ? 14 : 10;
+  const center = svgSize / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference * (1 - progress);
 
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="relative">
-        <svg width="140" height="140" className="-rotate-90">
+        <svg width={svgSize} height={svgSize} className="-rotate-90">
           <circle
-            cx="70"
-            cy="70"
+            cx={center}
+            cy={center}
             r={radius}
             stroke="rgba(255,255,255,0.08)"
-            strokeWidth="10"
+            strokeWidth={strokeW}
             fill="none"
           />
           <circle
-            cx="70"
-            cy="70"
+            cx={center}
+            cy={center}
             r={radius}
             stroke="url(#timerGrad)"
-            strokeWidth="10"
+            strokeWidth={strokeW}
             fill="none"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
@@ -60,7 +64,7 @@ export default function RestTimer({ seconds, onComplete }: Props) {
           </defs>
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-4xl font-bold text-white">{timeLeft}</span>
+          <span className={`${large ? "text-6xl" : "text-4xl"} font-bold text-white`}>{timeLeft}</span>
         </div>
       </div>
       <p className="text-sm text-slate-400">Pause</p>
