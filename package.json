@@ -12,6 +12,9 @@
     "db:seed": "prisma db seed",
     "db:seed:once": "prisma migrate deploy && prisma db seed"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^6.6.0",
     "next": "^15.2.4",
