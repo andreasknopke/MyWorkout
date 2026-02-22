@@ -91,6 +91,7 @@ export const seedExercises: SeedExercise[] = [
     contraindications: ["WRIST_PAIN"],
     strainScore: 2,
     scienceNote: "Solider Einstieg mit guter Übertragbarkeit auf komplexere Push-Varianten.",
+    videoUrl: "https://www.youtube.com/watch?v=IODxDxX7oi4",
     minReps: 10,
     maxReps: 20,
     equipment: ["BODYWEIGHT"]
@@ -106,6 +107,7 @@ export const seedExercises: SeedExercise[] = [
     contraindications: ["WRIST_PAIN", "SHOULDER_PAIN"],
     strainScore: 3,
     scienceNote: "Mehr Range of Motion erhöht den Reiz in gedehnter Position.",
+    videoUrl: "https://www.youtube.com/watch?v=cfns5VDVVvk",
     minReps: 8,
     maxReps: 20,
     equipment: ["BODYWEIGHT", "DUMBBELL"]
@@ -163,6 +165,7 @@ export const seedExercises: SeedExercise[] = [
     primaryMuscle: "Biceps",
     strainScore: 1,
     scienceNote: "Long Head wird in gedehnter Position belastet.",
+    videoUrl: "https://www.youtube.com/watch?v=soxrZlIl35U",
     minReps: 8,
     maxReps: 15,
     equipment: ["DUMBBELL", "BENCH"]
@@ -178,6 +181,7 @@ export const seedExercises: SeedExercise[] = [
     contraindications: ["KNEE_PAIN"],
     strainScore: 3,
     scienceNote: "Gut für Technik, Tiefe und kontrollierte Progression.",
+    videoUrl: "https://www.youtube.com/watch?v=MeIiIdhvXT4",
     sketchUrl: "/media/sketches/goblet-squat.svg",
     minReps: 8,
     maxReps: 15,
@@ -209,6 +213,7 @@ export const seedExercises: SeedExercise[] = [
     progressionStep: 1,
     strainScore: 2,
     scienceNote: "Skalierbare Zugübung für Schulterbalance.",
+    videoUrl: "https://www.youtube.com/watch?v=XZV9IwluPjw",
     minReps: 8,
     maxReps: 15,
     equipment: ["PULLUP_BAR"]
@@ -224,6 +229,7 @@ export const seedExercises: SeedExercise[] = [
     contraindications: ["SHOULDER_PAIN"],
     strainScore: 3,
     scienceNote: "Große ROM, gute Schulterfreiheit.",
+    videoUrl: "https://www.youtube.com/watch?v=4Y2ZdHCOXok",
     minReps: 6,
     maxReps: 12,
     equipment: ["DUMBBELL", "BENCH"]
@@ -239,6 +245,7 @@ export const seedExercises: SeedExercise[] = [
     contraindications: ["LOWER_BACK_PAIN"],
     strainScore: 4,
     scienceNote: "Hohe mechanische Spannung in Hamstrings.",
+    videoUrl: "https://www.youtube.com/watch?v=JCXUYuzwNrM",
     minReps: 5,
     maxReps: 10,
     equipment: ["BARBELL", "DUMBBELL"]
@@ -254,6 +261,7 @@ export const seedExercises: SeedExercise[] = [
     contraindications: ["KNEE_PAIN"],
     strainScore: 4,
     scienceNote: "Starker lokaler Reiz bei moderatem externem Gewicht.",
+    videoUrl: "https://www.youtube.com/watch?v=2C-uNgKwPLE",
     minReps: 8,
     maxReps: 12,
     equipment: ["BODYWEIGHT", "DUMBBELL", "BENCH"]
@@ -266,6 +274,7 @@ export const seedExercises: SeedExercise[] = [
     primaryMuscle: "Core",
     strainScore: 1,
     scienceNote: "Rumpfspannung und anti-extension für Belastbarkeit.",
+    videoUrl: "https://www.youtube.com/watch?v=ASdvN_XEl_c",
     minReps: 20,
     maxReps: 60,
     equipment: ["BODYWEIGHT"]
@@ -295,5 +304,121 @@ export const seedExercises: SeedExercise[] = [
     minReps: 8,
     maxReps: 15,
     equipment: ["MED_BALL"]
+  },
+  // ── New exercises ──────────────────────────────────────────────
+  {
+    slug: "burpee",
+    name: "Burpee",
+    description: "Explosive Ganzkörperübung: Liegestütz, Sprung, Repeat.",
+    movement: "CONDITIONING",
+    primaryMuscle: "Full Body",
+    strainScore: 3,
+    scienceNote: "Hoher metabolischer Stress und VO2-Reiz in kurzer Zeit.",
+    contraindications: ["LOW_IMPACT_ONLY", "WRIST_PAIN"],
+    videoUrl: "https://www.youtube.com/watch?v=dZgVxmf6jkA",
+    minReps: 8,
+    maxReps: 15,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "mountain-climber",
+    name: "Mountain Climber",
+    description: "Dynamische Core-Übung mit Cardio-Effekt.",
+    movement: "CONDITIONING",
+    primaryMuscle: "Core/Cardio",
+    strainScore: 2,
+    scienceNote: "Kombiniert Rumpfstabilität mit Konditionierung.",
+    contraindications: ["WRIST_PAIN"],
+    videoUrl: "https://www.youtube.com/watch?v=nmwgirgXLYM",
+    minReps: 20,
+    maxReps: 40,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "dip",
+    name: "Dip",
+    description: "Klassische Drückübung an Barren oder Stuhl.",
+    movement: "PUSH",
+    primaryMuscle: "Chest/Triceps",
+    progressionPath: "pushup_variation",
+    progressionStep: 4,
+    contraindications: ["SHOULDER_PAIN", "WRIST_PAIN"],
+    strainScore: 3,
+    scienceNote: "Hohe Belastung bei gestrecktem Schultergelenk, starker Trizeps-/Brustreiz.",
+    videoUrl: "https://www.youtube.com/watch?v=2z8JmcrW-As",
+    minReps: 6,
+    maxReps: 15,
+    equipment: ["BODYWEIGHT", "BENCH", "CHAIR"]
+  },
+  {
+    slug: "lunge",
+    name: "Lunge",
+    description: "Ausfallschritt vorwärts oder rückwärts.",
+    movement: "LEGS",
+    primaryMuscle: "Quadriceps/Glutes",
+    progressionPath: "single_leg_squat",
+    progressionStep: 1,
+    contraindications: ["KNEE_PAIN"],
+    strainScore: 2,
+    scienceNote: "Unilaterale Beinübung für Balance und Kraft.",
+    videoUrl: "https://www.youtube.com/watch?v=QOVaHwm-Q6U",
+    minReps: 8,
+    maxReps: 15,
+    equipment: ["BODYWEIGHT", "DUMBBELL"]
+  },
+  {
+    slug: "shoulder-press",
+    name: "Shoulder Press",
+    description: "Kurzhantel-Schulterdrücken im Stehen oder Sitzen.",
+    movement: "PUSH",
+    primaryMuscle: "Shoulders",
+    progressionPath: "overhead_press",
+    progressionStep: 1,
+    contraindications: ["SHOULDER_PAIN"],
+    strainScore: 3,
+    scienceNote: "Basis-Überkopfbewegung für Schulterkraft und -masse.",
+    videoUrl: "https://www.youtube.com/watch?v=0JfYxMRsUCQ",
+    minReps: 6,
+    maxReps: 12,
+    equipment: ["DUMBBELL"]
+  },
+  {
+    slug: "lateral-raise",
+    name: "Lateral Raise",
+    description: "Seitliches Kurzhantel-Heben für die mittlere Schulter.",
+    movement: "PUSH",
+    primaryMuscle: "Shoulders",
+    strainScore: 1,
+    scienceNote: "Isolationsübung für breitere Schulteroptik.",
+    videoUrl: "https://www.youtube.com/watch?v=geenhiHju-o",
+    minReps: 10,
+    maxReps: 20,
+    equipment: ["DUMBBELL"]
+  },
+  {
+    slug: "dead-bug",
+    name: "Dead Bug",
+    description: "Anti-Extensions-Core-Übung in Rückenlage.",
+    movement: "CORE",
+    primaryMuscle: "Core",
+    strainScore: 1,
+    scienceNote: "Lehrt Rumpfkontrolle bei diagonaler Extremitätenbewegung.",
+    videoUrl: "https://www.youtube.com/watch?v=g_BYB0R-4Ws",
+    minReps: 8,
+    maxReps: 16,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "glute-bridge",
+    name: "Glute Bridge",
+    description: "Beckenhebung in Rückenlage für Glute-Aktivierung.",
+    movement: "LEGS",
+    primaryMuscle: "Glutes",
+    strainScore: 1,
+    scienceNote: "Geringes Verletzungsrisiko, ideal für Glute-Ansteuerung und Aufwärmen.",
+    videoUrl: "https://www.youtube.com/watch?v=wPM8icPu6H8",
+    minReps: 10,
+    maxReps: 20,
+    equipment: ["BODYWEIGHT"]
   }
 ];
