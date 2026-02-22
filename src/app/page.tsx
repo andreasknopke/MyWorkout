@@ -5,6 +5,7 @@ import type { EquipmentType, Goal, Limitation } from "@prisma/client";
 import OnboardingWizard from "@/components/OnboardingWizard";
 import Dashboard from "@/components/Dashboard";
 import WorkoutMode from "@/components/WorkoutMode";
+import UserSettings from "@/components/UserSettings";
 
 type UserProfile = {
   id: string;
@@ -47,7 +48,7 @@ type GeneratedSession = {
   }>;
 };
 
-type AppView = "loading" | "onboarding" | "dashboard" | "workout";
+type AppView = "loading" | "onboarding" | "dashboard" | "workout" | "settings";
 
 export default function Home() {
   const [view, setView] = useState<AppView>("loading");
@@ -139,6 +140,10 @@ export default function Home() {
     setView("dashboard");
   }
 
+  function handleUserUpdated(updatedUser: UserProfile) {
+    setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
+  }
+
   /* ── LOADING ── */
   if (view === "loading") {
     return (
@@ -172,6 +177,17 @@ export default function Home() {
     );
   }
 
+  /* ── SETTINGS ── */
+  if (view === "settings" && activeUser) {
+    return (
+      <UserSettings
+        user={activeUser}
+        onBack={() => setView("dashboard")}
+        onUserUpdated={handleUserUpdated}
+      />
+    );
+  }
+
   /* ── DASHBOARD ── */
   if (activeUser) {
     return (
@@ -182,6 +198,7 @@ export default function Home() {
           onSwitchUser={handleSwitchUser}
           onStartWorkout={handleStartWorkout}
           onNewProfile={() => setView("onboarding")}
+          onSettings={() => setView("settings")}
         />
 
         {/* Loading overlay */}

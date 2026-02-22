@@ -10,7 +10,10 @@ export async function GET() {
         name: true,
         description: true,
         movement: true,
-        primaryMuscle: true
+        primaryMuscle: true,
+        videoUrl: true,
+        equipment: true,
+        strainScore: true
       },
       orderBy: { name: "asc" }
     });

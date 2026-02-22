@@ -22,6 +22,7 @@ type Props = {
   onSwitchUser: (userId: string) => void;
   onStartWorkout: () => void;
   onNewProfile: () => void;
+  onSettings: () => void;
 };
 
 export default function Dashboard({
@@ -29,7 +30,8 @@ export default function Dashboard({
   users,
   onSwitchUser,
   onStartWorkout,
-  onNewProfile
+  onNewProfile,
+  onSettings
 }: Props) {
   const schedule = useMemo(
     () => generateWeeklySchedule(user.trainingDaysPerWeek),
@@ -77,6 +79,14 @@ export default function Dashboard({
                 title="Neues Profil"
               >
                 +
+              </button>
+              <button
+                type="button"
+                onClick={onSettings}
+                className="w-10 h-10 rounded-xl glass flex items-center justify-center text-lg hover:bg-white/10 transition-colors"
+                title="Einstellungen"
+              >
+                ⚙️
               </button>
             </div>
           </div>
