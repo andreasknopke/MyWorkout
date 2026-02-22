@@ -44,6 +44,15 @@ Empfohlene Reihenfolge:
 5. Build Command: `npm run build`
 6. Start Command: `npm run start`
 
+### Railway Troubleshooting (wichtig)
+
+- Wenn Logs `localhost:5432` zeigen, ist `DATABASE_URL` falsch gesetzt.
+- In Railway beim Webservice `DATABASE_URL` als **Reference** auf den PostgreSQL-Service setzen.
+- `db:seed` nicht als Start Command verwenden. Seed nur als einmaliger Job ausführen.
+- Reihenfolge für Prod:
+	1. `npx prisma migrate deploy`
+	2. optional `npm run db:seed`
+
 ## Domänenmodell (MVP)
 
 - `User`, `UserEquipment`

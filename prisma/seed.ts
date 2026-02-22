@@ -1,9 +1,30 @@
 import { PrismaClient } from "@prisma/client";
 import { seedExercises } from "../src/data/exercises";
+import { resolveDatabaseUrl, validateHostedDatabaseUrl } from "../src/lib/databaseUrl";
 
-const prisma = new PrismaClient();
+const resolvedDatabaseUrl = resolveDatabaseUrl();
+validateHostedDatabaseUrl(resolvedDatabaseUrl);
+
+if (resolvedDatabaseUrl) {
+  process.env.DATABASE_URL = resolvedDatabaseUrl;
+}
+
+const prisma =
+  resolvedDatabaseUrl
+    ? new PrismaClient({
+        datasources: {
+          db: {
+            url: resolvedDatabaseUrl
+          }
+        }
+      })
+    : new PrismaClient();
 
 async function main() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL fehlt. Setze die Variable vor dem Seeding.");
+  }
+
   const user = await prisma.user.upsert({
     where: { id: "00000000-0000-0000-0000-000000000001" },
     update: {},

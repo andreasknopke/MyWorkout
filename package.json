@@ -5,14 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "start": "next start",
+    "start": "prisma migrate deploy && next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "prisma db seed"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "db:seed": "prisma db seed",
+    "db:seed:once": "prisma migrate deploy && prisma db seed"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
