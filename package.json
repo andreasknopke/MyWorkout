@@ -5,13 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "start": "prisma migrate deploy && prisma db push && npm run db:seed:auto && next start",
+    "start": "prisma migrate deploy && prisma db push && npm run db:seed:auto && npm run db:sync && next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:seed:auto": "tsx prisma/seed-if-empty.ts",
-    "db:seed:once": "prisma migrate deploy && prisma db seed"
+    "db:seed:once": "prisma migrate deploy && prisma db seed",
+    "db:sync": "tsx prisma/seed-sync-exercises.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
