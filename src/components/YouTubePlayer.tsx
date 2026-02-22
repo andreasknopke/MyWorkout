@@ -12,10 +12,8 @@ function extractVideoId(url: string): string | null {
       return u.pathname.slice(1).split("/")[0] || null;
     }
     if (u.hostname.includes("youtube.com")) {
-      // /watch?v=ID
       const v = u.searchParams.get("v");
       if (v) return v;
-      // /embed/ID or /shorts/ID
       const match = u.pathname.match(/\/(embed|shorts)\/([^/?]+)/);
       if (match) return match[2];
     }
@@ -25,69 +23,77 @@ function extractVideoId(url: string): string | null {
   return null;
 }
 
-/* ────────────────────────────────────────────
-   Inline YouTube Player – always visible
-   (user must press play on the iframe itself)
-   ──────────────────────────────────────────── */
-export default function YouTubePlayer({
-  videoUrl,
-}: {
-  videoUrl: string;
-}) {
-  const videoId = extractVideoId(videoUrl);
+/** Check if URL points to a GIF / image file */
+function isImageUrl(url: string): boolean {
+  try {
+    const path = new URL(url).pathname.toLowerCase();
+    return /\.(gif|png|jpg|jpeg|webp|avif)$/.test(path);
+  } catch {
+    return false;
+  }
+}
 
-  if (!videoId) {
-    // fallback: external link if we can't parse
+/* ────────────────────────────────────────────
+   Media embed – shows YouTube iframe OR GIF/image
+   ──────────────────────────────────────────── */
+function MediaEmbed({ url, className }: { url: string; className?: string }) {
+  // GIF / image
+  if (isImageUrl(url)) {
     return (
-      <a
-        href={videoUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block glass p-3 text-center text-sm text-brand-400 hover:text-brand-300 transition-colors"
-        title="Video ansehen (extern)"
-      >
-        🎬 Technikvideo ansehen
-      </a>
+      <div className={`rounded-2xl overflow-hidden border border-white/10 shadow-2xl ${className ?? ""}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={url}
+          alt="Übung"
+          className="w-full h-auto"
+          loading="lazy"
+        />
+      </div>
     );
   }
 
-  return (
-    <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-      <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-        <iframe
-          className="absolute inset-0 w-full h-full"
-          src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
-          title="Technikvideo"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
+  // YouTube
+  const videoId = extractVideoId(url);
+  if (videoId) {
+    return (
+      <div className={`rounded-2xl overflow-hidden border border-white/10 shadow-2xl ${className ?? ""}`}>
+        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+          <iframe
+            className="absolute inset-0 w-full h-full"
+            src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
+            title="Technikvideo"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
       </div>
-    </div>
+    );
+  }
+
+  // Fallback: external link
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block glass p-3 text-center text-sm text-brand-400 hover:text-brand-300 transition-colors"
+      title="Video ansehen (extern)"
+    >
+      🎬 Technikvideo ansehen
+    </a>
   );
 }
 
 /* ────────────────────────────────────────────
-   Compact panel for ExerciseCard – always visible
+   Full-size player (WorkoutMode)
    ──────────────────────────────────────────── */
-export function YouTubePlayerPanel({
-  videoUrl,
-}: {
-  videoUrl: string;
-}) {
-  const videoId = extractVideoId(videoUrl);
-  if (!videoId) return null;
+export default function YouTubePlayer({ videoUrl }: { videoUrl: string }) {
+  return <MediaEmbed url={videoUrl} />;
+}
 
-  return (
-    <div className="mt-2 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-      <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-        <iframe
-          className="absolute inset-0 w-full h-full"
-          src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`}
-          title="Technikvideo"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-      </div>
-    </div>
-  );
+/* ────────────────────────────────────────────
+   Compact panel for ExerciseCard / Onboarding
+   ──────────────────────────────────────────── */
+export function YouTubePlayerPanel({ videoUrl }: { videoUrl: string }) {
+  return <MediaEmbed url={videoUrl} className="mt-2" />;
 }
