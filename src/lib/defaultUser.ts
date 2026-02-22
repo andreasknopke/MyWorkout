@@ -53,7 +53,7 @@ export async function updateUserGoal(userId: string, goal: Goal) {
 export async function replaceUserEquipment(userId: string, equipment: EquipmentType[]) {
   await db.userEquipment.deleteMany({ where: { userId } });
 
-  const normalized = equipment.length > 0 ? equipment : ["BODYWEIGHT"];
+  const normalized: EquipmentType[] = equipment.length > 0 ? equipment : ["BODYWEIGHT"];
 
   await db.userEquipment.createMany({
     data: normalized.map((entry) => ({
