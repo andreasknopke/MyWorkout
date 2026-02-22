@@ -361,8 +361,12 @@ export default function WorkoutMode({ session, onComplete, onExit }: Props) {
 
         <div className="flex-1 overflow-y-auto p-4 pb-8">
           <div className="mx-auto max-w-lg w-full animate-fade-in" key={currentIndex}>
-            {/* Exercise visual */}
-            {currentItem.exercise.sketchUrl && (
+            {/* Exercise visual: Video player or Sketch */}
+            {currentItem.exercise.videoUrl ? (
+              <div className="mb-4">
+                <YouTubePlayer videoUrl={currentItem.exercise.videoUrl} />
+              </div>
+            ) : currentItem.exercise.sketchUrl ? (
               <div className="mb-4 rounded-2xl overflow-hidden bg-white/5 aspect-video flex items-center justify-center relative">
                 <Image
                   src={currentItem.exercise.sketchUrl}
@@ -372,7 +376,7 @@ export default function WorkoutMode({ session, onComplete, onExit }: Props) {
                   sizes="(max-width: 512px) 100vw, 512px"
                 />
               </div>
-            )}
+            ) : null}
 
             <div className="text-center mb-4">
               <h1 className="text-2xl font-bold">{currentItem.exercise.name}</h1>
@@ -440,11 +444,6 @@ export default function WorkoutMode({ session, onComplete, onExit }: Props) {
                 💡 {currentItem.exercise.scienceNote}
               </p>
             </div>
-
-            {/* Video player */}
-            {currentItem.exercise.videoUrl && (
-              <YouTubePlayer videoUrl={currentItem.exercise.videoUrl} />
-            )}
           </div>
         </div>
       </div>
