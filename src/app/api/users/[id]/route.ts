@@ -30,9 +30,9 @@ const updateSchema = z.object({
     .optional()
 });
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const parsed = updateSchema.parse(body);
 
