@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Goal {
+  HYPERTROPHY
+  STRENGTH
+  ENDURANCE
+}
+
+enum DifficultyFeedback {
+  TOO_EASY
+  JUST_RIGHT
+  TOO_HARD
+}
+
+enum MovementPattern {
+  PUSH
+  PULL
+  LEGS
+  CORE
+  CONDITIONING
+}
+
+enum PeriodPhase {
+  ACCUMULATION
+  INTENSIFICATION
+  DELOAD
+}
+
+enum EquipmentType {
+  BODYWEIGHT
+  DUMBBELL
+  BARBELL
+  KETTLEBELL
+  PULLUP_BAR
+  ROWING_MACHINE
+  RESISTANCE_BAND
+  BENCH
+  CHAIR
+  CABLE_MACHINE
+  MED_BALL
+}
+
+enum Limitation {
+  SHOULDER_PAIN
+  KNEE_PAIN
+  LOWER_BACK_PAIN
+  WRIST_PAIN
+  LOW_IMPACT_ONLY
+}
+
+model User {
+  id                  String         @id @default(uuid())
+  name                String
+  goal                Goal           @default(HYPERTROPHY)
+  trainingDaysPerWeek Int            @default(3)
+  cycleLengthWeeks    Int            @default(6)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  equipment           UserEquipment[]
+  limitations         UserLimitation[]
+  sessions            WorkoutSession[]
+}
+
+model UserEquipment {
+  id        String        @id @default(uuid())
+  userId    String
+  equipment EquipmentType
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, equipment])
+}
+
+model Exercise {
+  id            String              @id @default(uuid())
+  slug          String              @unique
+  name          String
+  description   String
+  movement      MovementPattern
+  primaryMuscle String
+  progressionPath String?
+  progressionStep Int?
+  contraindications Limitation[]      @default([])
+  strainScore   Int
+  scienceNote   String
+  videoUrl      String?
+  sketchUrl     String?
+  minReps       Int
+  maxReps       Int
+  createdAt     DateTime            @default(now())
+  equipment     ExerciseEquipment[]
+  items         WorkoutItem[]
+  feedback      WorkoutFeedback[]
+}
+
+model UserLimitation {
+  id         String      @id @default(uuid())
+  userId     String
+  limitation Limitation
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, limitation])
+}
+
+model ExerciseEquipment {
+  id        String        @id @default(uuid())
+  exerciseId String
+  equipment EquipmentType
+  exercise  Exercise      @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@unique([exerciseId, equipment])
+}
+
+model WorkoutSession {
+  id           String            @id @default(uuid())
+  userId       String
+  plannedDate  DateTime          @default(now())
+  blockWeek    Int               @default(1)
+  phase        PeriodPhase       @default(ACCUMULATION)
+  targetRpe    Float
+  fatigueScore Float
+  deload       Boolean           @default(false)
+  createdAt    DateTime          @default(now())
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items        WorkoutItem[]
+  feedback     WorkoutFeedback[]
+}
+
+model WorkoutItem {
+  id           String         @id @default(uuid())
+  sessionId    String
+  exerciseId   String
+  sets         Int
+  repsMin      Int
+  repsMax      Int
+  restSec      Int
+  loadModifier Float          @default(1)
+  session      WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exercise     Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+}
+
+model WorkoutFeedback {
+  id            String              @id @default(uuid())
+  sessionId     String
+  exerciseId    String
+  avgRpe        Float
+  completedSets Int
+  completedReps Int
+  difficulty    DifficultyFeedback
+  notes         String?
+  createdAt     DateTime            @default(now())
+  session       WorkoutSession      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exercise      Exercise            @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+}

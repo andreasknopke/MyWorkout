@@ -1,0 +1,299 @@
+import type { EquipmentType, Limitation, MovementPattern } from "@prisma/client";
+
+export type SeedExercise = {
+  slug: string;
+  name: string;
+  description: string;
+  movement: MovementPattern;
+  primaryMuscle: string;
+  progressionPath?: string;
+  progressionStep?: number;
+  contraindications?: Limitation[];
+  strainScore: number;
+  scienceNote: string;
+  videoUrl?: string;
+  sketchUrl?: string;
+  minReps: number;
+  maxReps: number;
+  equipment: EquipmentType[];
+};
+
+export const seedExercises: SeedExercise[] = [
+  {
+    slug: "b-stance-rdl",
+    name: "B-Stance Romanian Deadlift",
+    description: "Hinge-Übung mit 80/20 Lastverteilung für mehr Stabilität und hohe mechanische Spannung.",
+    movement: "LEGS",
+    primaryMuscle: "Hamstrings/Glutes",
+    progressionPath: "hinge_stability",
+    progressionStep: 2,
+    contraindications: ["LOWER_BACK_PAIN"],
+    strainScore: 3,
+    scienceNote: "Unilateraler Reiz mit höherer Last als klassische einbeinige RDL.",
+    videoUrl: "https://www.youtube.com/watch?v=3d8m3wDk7D8",
+    sketchUrl: "/media/sketches/b-stance-rdl.svg",
+    minReps: 6,
+    maxReps: 10,
+    equipment: ["DUMBBELL", "KETTLEBELL"]
+  },
+  {
+    slug: "copenhagen-plank",
+    name: "Copenhagen Plank",
+    description: "Seitstütz-Variante mit hoher Adduktoren-Aktivierung.",
+    movement: "CORE",
+    primaryMuscle: "Adductors/Core",
+    strainScore: 2,
+    scienceNote: "Stärkt Leistenregion und Beckenstabilität.",
+    sketchUrl: "/media/sketches/copenhagen-plank.svg",
+    minReps: 20,
+    maxReps: 45,
+    equipment: ["CHAIR", "BENCH"]
+  },
+  {
+    slug: "sissy-squat",
+    name: "Sissy Squat",
+    description: "Quadrizeps-fokussierte Kniebeuge mit sehr großer Dehnung.",
+    movement: "LEGS",
+    primaryMuscle: "Quadriceps",
+    progressionPath: "single_leg_squat",
+    progressionStep: 1,
+    contraindications: ["KNEE_PAIN"],
+    strainScore: 3,
+    scienceNote: "Dehnung unter Last kann Hypertrophie stark fördern.",
+    minReps: 8,
+    maxReps: 15,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "z-press",
+    name: "Z-Press",
+    description: "Schulterdrücken im Sitzen auf dem Boden ohne Beinschwung.",
+    movement: "PUSH",
+    primaryMuscle: "Shoulders",
+    progressionPath: "overhead_press",
+    progressionStep: 2,
+    contraindications: ["SHOULDER_PAIN", "LOWER_BACK_PAIN"],
+    strainScore: 4,
+    scienceNote: "Erzwingt Rumpfspannung und saubere Press-Mechanik.",
+    videoUrl: "https://www.youtube.com/watch?v=4u6Q2VxM6nA",
+    minReps: 5,
+    maxReps: 10,
+    equipment: ["DUMBBELL", "BARBELL"]
+  },
+  {
+    slug: "pushup",
+    name: "Push-Up",
+    description: "Klassischer Liegestütz als skalierbare Basis-Drückübung.",
+    movement: "PUSH",
+    primaryMuscle: "Chest/Triceps",
+    progressionPath: "pushup_variation",
+    progressionStep: 1,
+    contraindications: ["WRIST_PAIN"],
+    strainScore: 2,
+    scienceNote: "Solider Einstieg mit guter Übertragbarkeit auf komplexere Push-Varianten.",
+    minReps: 10,
+    maxReps: 20,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "deficit-pushup",
+    name: "Deficit Push-Up",
+    description: "Liegestütz mit erhöhter Handposition für größere ROM.",
+    movement: "PUSH",
+    primaryMuscle: "Chest/Triceps",
+    progressionPath: "pushup_variation",
+    progressionStep: 2,
+    contraindications: ["WRIST_PAIN", "SHOULDER_PAIN"],
+    strainScore: 3,
+    scienceNote: "Mehr Range of Motion erhöht den Reiz in gedehnter Position.",
+    minReps: 8,
+    maxReps: 20,
+    equipment: ["BODYWEIGHT", "DUMBBELL"]
+  },
+  {
+    slug: "archer-pushup",
+    name: "Archer Push-Up",
+    description: "Einseitig betonte Push-Up Progression.",
+    movement: "PUSH",
+    primaryMuscle: "Chest/Triceps",
+    progressionPath: "pushup_variation",
+    progressionStep: 3,
+    contraindications: ["WRIST_PAIN", "SHOULDER_PAIN"],
+    strainScore: 4,
+    scienceNote: "Mechanische Überlastung eines Arms ohne externes Gewicht.",
+    minReps: 5,
+    maxReps: 10,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "face-pull-er",
+    name: "Face Pull mit Außenrotation",
+    description: "Band- oder Kabelzugzug zur hinteren Schulter und Rotatorenmanschette.",
+    movement: "PULL",
+    primaryMuscle: "Rear Delt/Rotator Cuff",
+    strainScore: 1,
+    scienceNote: "Kann Schultergesundheit und Haltung verbessern.",
+    contraindications: [],
+    videoUrl: "https://www.youtube.com/watch?v=rep-qVOkqgk",
+    minReps: 12,
+    maxReps: 20,
+    equipment: ["RESISTANCE_BAND", "CABLE_MACHINE"]
+  },
+  {
+    slug: "pendlay-row",
+    name: "Pendlay Row",
+    description: "Rudern vom Boden mit Null-Momentum pro Wiederholung.",
+    movement: "PULL",
+    primaryMuscle: "Upper Back",
+    progressionPath: "barbell_row",
+    progressionStep: 2,
+    contraindications: ["LOWER_BACK_PAIN"],
+    strainScore: 4,
+    scienceNote: "Hohe Kraftentwicklung bei klaren Startpositionen.",
+    videoUrl: "https://www.youtube.com/watch?v=axoeDmW0oAY",
+    minReps: 4,
+    maxReps: 8,
+    equipment: ["BARBELL"]
+  },
+  {
+    slug: "incline-db-curl",
+    name: "Incline Dumbbell Curl",
+    description: "Bizepscurls auf Schrägbank für Dehnungsfokus.",
+    movement: "PULL",
+    primaryMuscle: "Biceps",
+    strainScore: 1,
+    scienceNote: "Long Head wird in gedehnter Position belastet.",
+    minReps: 8,
+    maxReps: 15,
+    equipment: ["DUMBBELL", "BENCH"]
+  },
+  {
+    slug: "goblet-squat",
+    name: "Goblet Squat",
+    description: "Ganzkörper-Kniebeuge mit Kurzhantel oder Kettlebell.",
+    movement: "LEGS",
+    primaryMuscle: "Quadriceps/Glutes",
+    progressionPath: "single_leg_squat",
+    progressionStep: 2,
+    contraindications: ["KNEE_PAIN"],
+    strainScore: 3,
+    scienceNote: "Gut für Technik, Tiefe und kontrollierte Progression.",
+    sketchUrl: "/media/sketches/goblet-squat.svg",
+    minReps: 8,
+    maxReps: 15,
+    equipment: ["DUMBBELL", "KETTLEBELL"]
+  },
+  {
+    slug: "pull-up",
+    name: "Pull-Up",
+    description: "Vertikales Ziehen mit Körpergewicht.",
+    movement: "PULL",
+    primaryMuscle: "Lats",
+    progressionPath: "vertical_pull",
+    progressionStep: 2,
+    contraindications: ["SHOULDER_PAIN", "WRIST_PAIN"],
+    strainScore: 4,
+    scienceNote: "Hohe relative Last und starker Rückenreiz.",
+    videoUrl: "https://www.youtube.com/watch?v=eGo4IYlbE5g",
+    minReps: 4,
+    maxReps: 10,
+    equipment: ["PULLUP_BAR"]
+  },
+  {
+    slug: "inverted-row",
+    name: "Inverted Row",
+    description: "Horizontales Ziehen am Rack/Tisch/Stange.",
+    movement: "PULL",
+    primaryMuscle: "Upper Back",
+    progressionPath: "vertical_pull",
+    progressionStep: 1,
+    strainScore: 2,
+    scienceNote: "Skalierbare Zugübung für Schulterbalance.",
+    minReps: 8,
+    maxReps: 15,
+    equipment: ["PULLUP_BAR"]
+  },
+  {
+    slug: "dumbbell-bench-press",
+    name: "Dumbbell Bench Press",
+    description: "Horizontales Drücken mit Kurzhanteln.",
+    movement: "PUSH",
+    primaryMuscle: "Chest",
+    progressionPath: "horizontal_press",
+    progressionStep: 2,
+    contraindications: ["SHOULDER_PAIN"],
+    strainScore: 3,
+    scienceNote: "Große ROM, gute Schulterfreiheit.",
+    minReps: 6,
+    maxReps: 12,
+    equipment: ["DUMBBELL", "BENCH"]
+  },
+  {
+    slug: "romanian-deadlift",
+    name: "Romanian Deadlift",
+    description: "Hip-Hinge mit Fokus auf posterior chain.",
+    movement: "LEGS",
+    primaryMuscle: "Hamstrings/Glutes",
+    progressionPath: "hinge_stability",
+    progressionStep: 1,
+    contraindications: ["LOWER_BACK_PAIN"],
+    strainScore: 4,
+    scienceNote: "Hohe mechanische Spannung in Hamstrings.",
+    minReps: 5,
+    maxReps: 10,
+    equipment: ["BARBELL", "DUMBBELL"]
+  },
+  {
+    slug: "split-squat",
+    name: "Bulgarian Split Squat",
+    description: "Unilaterale Kniebeuge mit erhöhtem hinteren Bein.",
+    movement: "LEGS",
+    primaryMuscle: "Quadriceps/Glutes",
+    progressionPath: "single_leg_squat",
+    progressionStep: 3,
+    contraindications: ["KNEE_PAIN"],
+    strainScore: 4,
+    scienceNote: "Starker lokaler Reiz bei moderatem externem Gewicht.",
+    minReps: 8,
+    maxReps: 12,
+    equipment: ["BODYWEIGHT", "DUMBBELL", "BENCH"]
+  },
+  {
+    slug: "plank",
+    name: "RKC Plank",
+    description: "Spannungsorientierte Plank-Variante.",
+    movement: "CORE",
+    primaryMuscle: "Core",
+    strainScore: 1,
+    scienceNote: "Rumpfspannung und anti-extension für Belastbarkeit.",
+    minReps: 20,
+    maxReps: 60,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "rowing-interval",
+    name: "Rudergerät Intervalle",
+    description: "Kurze harte Intervalle mit aktiver Pause.",
+    movement: "CONDITIONING",
+    primaryMuscle: "Cardio/Back/Legs",
+    strainScore: 3,
+    scienceNote: "Zeitökonomisch für VO2 und Work Capacity.",
+    contraindications: ["LOW_IMPACT_ONLY"],
+    minReps: 30,
+    maxReps: 90,
+    equipment: ["ROWING_MACHINE"]
+  },
+  {
+    slug: "medball-slam",
+    name: "Med Ball Slam",
+    description: "Explosives Ganzkörpermuster für Power und Conditioning.",
+    movement: "CONDITIONING",
+    primaryMuscle: "Full Body",
+    strainScore: 2,
+    scienceNote: "Explosive Kontraktion mit geringer exzentrischer Belastung.",
+    contraindications: ["LOW_IMPACT_ONLY", "SHOULDER_PAIN"],
+    minReps: 8,
+    maxReps: 15,
+    equipment: ["MED_BALL"]
+  }
+];
