@@ -11,6 +11,7 @@ import {
 } from "@/lib/labels";
 import Image from "next/image";
 import RestTimer from "./RestTimer";
+import YouTubePlayer from "./YouTubePlayer";
 
 type WorkoutItem = {
   id: string;
@@ -330,16 +331,9 @@ export default function WorkoutMode({ session, onComplete, onExit }: Props) {
               </p>
             </div>
 
-            {/* Video link */}
+            {/* Video player */}
             {currentItem.exercise.videoUrl && (
-              <a
-                href={currentItem.exercise.videoUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="block glass p-3 text-center text-sm text-brand-400 hover:text-brand-300 transition-colors"
-              >
-                🎬 Technikvideo ansehen
-              </a>
+              <YouTubePlayer videoUrl={currentItem.exercise.videoUrl} />
             )}
           </div>
         </div>

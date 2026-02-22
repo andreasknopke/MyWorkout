@@ -13,6 +13,7 @@ import {
   GENDER_OPTIONS
 } from "@/lib/labels";
 import { EQUIPMENT_OPTIONS, LIMITATION_OPTIONS } from "@/lib/types";
+import YouTubePlayer, { YouTubePlayerPanel } from "./YouTubePlayer";
 
 /* ── Types ── */
 type UserProfile = {
@@ -479,6 +480,7 @@ function ExerciseCard({
   onVideoUrlChanged: (exerciseId: string, slug: string, videoUrl: string | null) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [videoOpen, setVideoOpen] = useState(false);
   const [editingUrl, setEditingUrl] = useState(ex.videoUrl ?? "");
   const [savingUrl, setSavingUrl] = useState(false);
   const [urlMsg, setUrlMsg] = useState<string | null>(null);
@@ -571,18 +573,18 @@ function ExerciseCard({
         {/* Video button + expand */}
         <div className="flex flex-col items-center gap-1 flex-shrink-0">
           {ex.videoUrl ? (
-            <a
-              href={ex.videoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20
-                flex items-center justify-center text-lg
-                hover:bg-red-500/20 hover:border-red-500/40 transition-all
-                active:scale-95"
-              title="Video ansehen"
+            <button
+              type="button"
+              onClick={() => setVideoOpen(!videoOpen)}
+              className={`w-10 h-10 rounded-xl border flex items-center justify-center text-lg transition-all active:scale-95 ${
+                videoOpen
+                  ? "bg-red-500/30 border-red-500/50 shadow-lg shadow-red-500/10"
+                  : "bg-red-500/10 border-red-500/20 hover:bg-red-500/20 hover:border-red-500/40"
+              }`}
+              title={videoOpen ? "Video schließen" : "Video ansehen"}
             >
-              ▶️
-            </a>
+              {videoOpen ? "⏹️" : "▶️"}
+            </button>
           ) : (
             <div
               className="w-10 h-10 rounded-xl bg-white/5 border border-white/10
@@ -661,6 +663,11 @@ function ExerciseCard({
             )}
           </div>
         </div>
+      )}
+
+      {/* Inline video player */}
+      {ex.videoUrl && (
+        <YouTubePlayerPanel videoUrl={ex.videoUrl} open={videoOpen} />
       )}
     </div>
   );
