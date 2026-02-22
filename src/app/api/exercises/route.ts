@@ -12,12 +12,19 @@ export async function GET() {
         movement: true,
         primaryMuscle: true,
         videoUrl: true,
-        equipment: true,
+        equipment: { select: { equipment: true } },
         strainScore: true
       },
       orderBy: { name: "asc" }
     });
-    return NextResponse.json({ ok: true, exercises });
+
+    // Flatten equipment relation to plain string array
+    const result = exercises.map((ex) => ({
+      ...ex,
+      equipment: ex.equipment.map((e) => e.equipment)
+    }));
+
+    return NextResponse.json({ ok: true, exercises: result });
   } catch (error) {
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Fehler beim Laden" },
