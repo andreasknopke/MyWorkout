@@ -71,7 +71,8 @@ export const MOVEMENT_LABELS: Record<MovementPattern, string> = {
   PULL: "Ziehen",
   LEGS: "Beine",
   CORE: "Rumpf",
-  CONDITIONING: "Kondition"
+  CONDITIONING: "Kondition",
+  STRETCHING: "Dehnung"
 };
 
 export const PHASE_LABELS: Record<PeriodPhase, string> = {

@@ -572,5 +572,153 @@ export const seedExercises: SeedExercise[] = [
     minReps: 6,
     maxReps: 12,
     equipment: ["BARBELL"]
+  },
+
+  /* ═══════════════════════════════════════════════════════════
+     Dehnung / Warmup / Cooldown (fitkurs.de)
+     ═══════════════════════════════════════════════════════════ */
+  {
+    slug: "katze-kuh",
+    name: "Katze-Kuh (Cat-Cow)",
+    description: "Mobilisationsübung aus dem Yoga – macht die Wirbelsäule flexibel und löst Verspannungen im Rücken.",
+    movement: "STRETCHING",
+    primaryMuscle: "Rücken/Rumpf",
+    strainScore: 1,
+    scienceNote: "Fördert Wirbelsäulenmobilität und Propriozeption der Rumpfmuskulatur.",
+    minReps: 8,
+    maxReps: 15,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "herabschauender-hund",
+    name: "Herabschauender Hund",
+    description: "Eine der bekanntesten Yoga-Übungen – dehnt die gesamte Körperrückseite, Waden, Hamstrings und Schultern.",
+    movement: "STRETCHING",
+    primaryMuscle: "Hamstrings/Schultern/Waden",
+    strainScore: 1,
+    scienceNote: "Kombiniert Dehnung der posterioren Kette mit Schultermobilität und Rumpfstabilisation.",
+    minReps: 30,
+    maxReps: 60,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "yoga-kobra",
+    name: "Die Kobra (Bhujangasana)",
+    description: "Yoga-Übung für Anfänger – dehnt den Rücken, streckt die Wirbelsäule und öffnet den Brustkorb.",
+    movement: "STRETCHING",
+    primaryMuscle: "Rücken/Brust",
+    strainScore: 1,
+    scienceNote: "Sanfte Extension der Wirbelsäule fördert Haltung und löst Verspannungen der Brustwirbelsäule.",
+    minReps: 30,
+    maxReps: 60,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "stellung-des-kindes",
+    name: "Stellung des Kindes (Balasana)",
+    description: "Wohltuende Yoga-Ruhehaltung – entspannt den Körper und beruhigt den Geist. Ideal als Cooldown.",
+    movement: "STRETCHING",
+    primaryMuscle: "Rücken/Hüfte",
+    strainScore: 1,
+    scienceNote: "Passive Dehnung des unteren Rückens und der Hüftflexoren bei gleichzeitiger Aktivierung des Parasympathikus.",
+    minReps: 30,
+    maxReps: 90,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "yoga-dreieck",
+    name: "Das Yoga Dreieck (Trikonasana)",
+    description: "Yoga-Grundübung – dehnt und kräftigt Rücken, Rumpf, Schultern und Beine gleichzeitig.",
+    movement: "STRETCHING",
+    primaryMuscle: "Rumpf/Beine/Schultern",
+    strainScore: 1,
+    scienceNote: "Fördert laterale Flexibilität der Wirbelsäule und Stabilität des Standbeins.",
+    minReps: 30,
+    maxReps: 60,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "yoga-drehsitz",
+    name: "Der Yoga Drehsitz",
+    description: "Verdreht und mobilisiert die Wirbelsäule, dehnt die Po-Muskulatur und massiert die Bauchorgane.",
+    movement: "STRETCHING",
+    primaryMuscle: "Wirbelsäule/Rumpf",
+    strainScore: 1,
+    scienceNote: "Rotationsmobilität der Wirbelsäule verbessert Alltagsbewegungen und beugt Rückenschmerzen vor.",
+    minReps: 30,
+    maxReps: 60,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "krokodil-ruecken-dehnen",
+    name: "Das Krokodil (Rücken dehnen)",
+    description: "Dehnübung in Rückenlage – löst Verspannungen vor allem im Bereich des unteren Rückens und der Lendenwirbelsäule.",
+    movement: "STRETCHING",
+    primaryMuscle: "Unterer Rücken/LWS",
+    strainScore: 1,
+    scienceNote: "Rotationsdehnung in Rückenlage entlastet die Bandscheiben und löst muskuläre Spannung.",
+    minReps: 30,
+    maxReps: 60,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "hueftbeuger-dehnen",
+    name: "Hüftbeuger dehnen im Stehen",
+    description: "Dehnt den Hüftbeuger (Iliopsoas) im Stehen – hilft bei Rückenschmerzen und Verspannungen durch langes Sitzen.",
+    movement: "STRETCHING",
+    primaryMuscle: "Hüftbeuger/Oberschenkel",
+    strainScore: 1,
+    scienceNote: "Verkürzte Hüftbeuger sind Hauptursache für Hohlkreuz und lumbale Beschwerden – regelmäßiges Dehnen wirkt präventiv.",
+    minReps: 30,
+    maxReps: 60,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "ausfallschritt-t-rotation",
+    name: "Ausfallschritt mit T-Rotation",
+    description: "Dynamisches Dehnen aus dem funktionellen Training – ideal zum Aufwärmen und Mobilisieren des gesamten Körpers.",
+    movement: "STRETCHING",
+    primaryMuscle: "Rumpf/Beine/Schultern",
+    strainScore: 2,
+    scienceNote: "Kombiniert Hüftmobilität, Brustwirbelsäulenrotation und Beinkraft in einer Bewegung.",
+    minReps: 5,
+    maxReps: 8,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "walkouts-handlauf",
+    name: "Walkouts (Handlauf)",
+    description: "Dynamisches Aufwärmen – Hände wandern vom Stand in die Plank-Position und zurück. Dehnt die hintere Oberschenkelmuskulatur.",
+    movement: "STRETCHING",
+    primaryMuscle: "Hamstrings/Schultern/Rumpf",
+    strainScore: 2,
+    scienceNote: "Exzellent als Warmup: erhöht Körpertemperatur, mobilisiert Wirbelsäule und aktiviert posteriore Kette.",
+    minReps: 4,
+    maxReps: 8,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "windmuehle-rumpfdrehen",
+    name: "Windmühle (Rumpfdrehen in Vorbeuge)",
+    description: "Mobilisiert die Wirbelsäule durch Rotation in der Vorbeuge – fördert Beweglichkeit und Koordination.",
+    movement: "STRETCHING",
+    primaryMuscle: "Wirbelsäule/Rumpf",
+    strainScore: 1,
+    scienceNote: "Rotationsmobilität unter leichter Vorbeuge-Last verbessert funktionelle Bewegungsqualität.",
+    minReps: 6,
+    maxReps: 12,
+    equipment: ["BODYWEIGHT"]
+  },
+  {
+    slug: "yoga-fisch",
+    name: "Der Yoga Fisch (Matsyasana)",
+    description: "Yoga-Übung die den Brustkorb öffnet und Rücken, Schultern, Nacken und Brust streckt und kräftigt.",
+    movement: "STRETCHING",
+    primaryMuscle: "Brust/Rücken/Nacken",
+    strainScore: 1,
+    scienceNote: "Thorakale Extension öffnet die Brust und wirkt einem Rundrücken entgegen.",
+    minReps: 30,
+    maxReps: 60,
+    equipment: ["BODYWEIGHT"]
   }
 ];

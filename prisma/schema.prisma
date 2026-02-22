@@ -25,6 +25,7 @@ enum MovementPattern {
   LEGS
   CORE
   CONDITIONING
+  STRETCHING
 }
 
 enum PeriodPhase {

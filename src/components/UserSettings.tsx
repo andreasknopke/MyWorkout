@@ -55,7 +55,8 @@ const MOVEMENT_EMOJI: Record<string, string> = {
   PULL: "🫷",
   LEGS: "🦵",
   CORE: "🧘",
-  CONDITIONING: "🏃"
+  CONDITIONING: "🏃",
+  STRETCHING: "🧘‍♀️"
 };
 
 type SettingsTab = "profile" | "exercises";

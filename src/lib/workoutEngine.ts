@@ -212,7 +212,8 @@ export async function generateWorkoutSession(params: { userId: string; durationM
     ...sampleByMovement(eligible, "PUSH", 1),
     ...sampleByMovement(eligible, "PULL", 1),
     ...sampleByMovement(eligible, "CORE", 1),
-    ...sampleByMovement(eligible, "CONDITIONING", 1)
+    ...sampleByMovement(eligible, "CONDITIONING", 1),
+    ...sampleByMovement(eligible, "STRETCHING", 1)
   ]).slice(0, count);
 
   const selectedPaths = selected
