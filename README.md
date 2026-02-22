@@ -44,6 +44,10 @@ Empfohlene Reihenfolge:
 5. Build Command: `npm run build`
 6. Start Command: `npm run start`
 
+Hinweis: `npm run start` führt automatisch `prisma migrate deploy` und danach `prisma db push` aus.
+Damit werden fehlende Tabellen beim Start automatisch angelegt/synchronisiert.
+Zusätzlich läuft ein Seed nur dann automatisch, wenn die Datenbank leer ist.
+
 ### Railway Troubleshooting (wichtig)
 
 - Wenn Logs `localhost:5432` zeigen, ist `DATABASE_URL` falsch gesetzt.
