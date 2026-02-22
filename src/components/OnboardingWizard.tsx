@@ -12,6 +12,7 @@ import {
   GENDER_OPTIONS
 } from "@/lib/labels";
 import { EQUIPMENT_OPTIONS, LIMITATION_OPTIONS } from "@/lib/types";
+import { YouTubePlayerPanel } from "./YouTubePlayer";
 
 type ExerciseInfo = {
   id: string;
@@ -20,6 +21,7 @@ type ExerciseInfo = {
   description: string;
   movement: string;
   primaryMuscle: string;
+  videoUrl?: string | null;
 };
 
 type Props = {
@@ -339,30 +341,32 @@ export default function OnboardingWizard({ onComplete, onCancel }: Props) {
                   {exercises.map((ex) => {
                     const excluded = excludedSlugs.has(ex.slug);
                     return (
-                      <button
-                        key={ex.slug}
-                        type="button"
-                        className={`w-full text-left glass p-3 flex items-center gap-3 transition-all ${
-                          excluded ? "opacity-40" : ""
-                        }`}
-                        onClick={() => toggleExclusion(ex.slug)}
-                      >
-                        <div
-                          className={`w-6 h-6 rounded-lg border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
-                            excluded
-                              ? "border-red-500/50 bg-red-500/20"
-                              : "border-green-500/50 bg-green-500/20"
-                          }`}
+                      <div key={ex.slug} className={`glass p-3 transition-all ${excluded ? "opacity-40" : ""}`}>
+                        <button
+                          type="button"
+                          className="w-full text-left flex items-center gap-3"
+                          onClick={() => toggleExclusion(ex.slug)}
                         >
-                          <span className="text-xs">{excluded ? "✕" : "✓"}</span>
-                        </div>
-                        <div className="min-w-0">
-                          <p className={`font-medium text-sm ${excluded ? "line-through" : ""}`}>
-                            {ex.name}
-                          </p>
-                          <p className="text-xs text-slate-500 truncate">{ex.primaryMuscle}</p>
-                        </div>
-                      </button>
+                          <div
+                            className={`w-6 h-6 rounded-lg border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
+                              excluded
+                                ? "border-red-500/50 bg-red-500/20"
+                                : "border-green-500/50 bg-green-500/20"
+                            }`}
+                          >
+                            <span className="text-xs">{excluded ? "✕" : "✓"}</span>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className={`font-medium text-sm ${excluded ? "line-through" : ""}`}>
+                              {ex.name}
+                            </p>
+                            <p className="text-xs text-slate-500 truncate">{ex.primaryMuscle}</p>
+                          </div>
+                        </button>
+                        {ex.videoUrl && !excluded && (
+                          <YouTubePlayerPanel videoUrl={ex.videoUrl} />
+                        )}
+                      </div>
                     );
                   })}
                 </div>
