@@ -55,12 +55,22 @@ enum Limitation {
   LOW_IMPACT_ONLY
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
 model User {
   id                  String         @id @default(uuid())
   name                String
+  age                 Int?
+  gender              Gender?
   goal                Goal           @default(HYPERTROPHY)
+  durationMin         Int            @default(40)
   trainingDaysPerWeek Int            @default(3)
   cycleLengthWeeks    Int            @default(6)
+  excludedExercises   String[]       @default([])
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
   equipment           UserEquipment[]

@@ -1,4 +1,4 @@
-import type { EquipmentType, Goal, Limitation } from "@prisma/client";
+import type { EquipmentType, Gender, Goal, Limitation } from "@prisma/client";
 import { db } from "@/lib/db";
 
 const DEFAULT_USER_ID = "00000000-0000-0000-0000-000000000001";
@@ -12,7 +12,8 @@ export async function ensureDefaultUser(goal?: Goal) {
       name: "Familie",
       goal: goal ?? "HYPERTROPHY",
       trainingDaysPerWeek: 3,
-      cycleLengthWeeks: 6
+      cycleLengthWeeks: 6,
+      durationMin: 40
     }
   });
 }
@@ -26,18 +27,26 @@ export async function listUsers() {
 
 export async function createUserProfile(input: {
   name: string;
+  age?: number;
+  gender?: Gender;
   goal: Goal;
+  durationMin?: number;
   trainingDaysPerWeek: number;
   cycleLengthWeeks: number;
   equipment: EquipmentType[];
   limitations: Limitation[];
+  excludedExercises?: string[];
 }) {
   const created = await db.user.create({
     data: {
       name: input.name,
+      age: input.age,
+      gender: input.gender,
       goal: input.goal,
+      durationMin: input.durationMin ?? 40,
       trainingDaysPerWeek: input.trainingDaysPerWeek,
-      cycleLengthWeeks: input.cycleLengthWeeks
+      cycleLengthWeeks: input.cycleLengthWeeks,
+      excludedExercises: input.excludedExercises ?? []
     }
   });
 

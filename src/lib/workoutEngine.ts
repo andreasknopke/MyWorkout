@@ -188,9 +188,13 @@ export async function generateWorkoutSession(params: { userId: string; durationM
   const available = new Set<EquipmentType>(userEquip.map((x: { equipment: EquipmentType }) => x.equipment));
   available.add("BODYWEIGHT");
   const limitations = new Set<Limitation>(userLimitations.map((entry: { limitation: Limitation }) => entry.limitation));
+  const excludedSlugs = new Set<string>(user.excludedExercises ?? []);
 
   const eligible = allExercises.filter(
-    (ex: ExerciseWithEquipment) => isExerciseAvailable(ex, available) && isExerciseSafe(ex, limitations)
+    (ex: ExerciseWithEquipment) =>
+      isExerciseAvailable(ex, available) &&
+      isExerciseSafe(ex, limitations) &&
+      !excludedSlugs.has(ex.slug)
   );
 
   if (eligible.length === 0) {

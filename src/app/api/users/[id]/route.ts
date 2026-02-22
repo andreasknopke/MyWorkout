@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import type { EquipmentType, Goal, Limitation } from "@prisma/client";
+import type { EquipmentType, Gender, Goal, Limitation } from "@prisma/client";
 import { db } from "@/lib/db";
 import { replaceUserEquipment, replaceUserLimitations } from "@/lib/defaultUser";
 
 const updateSchema = z.object({
   goal: z.enum(["HYPERTROPHY", "STRENGTH", "ENDURANCE"]).optional(),
+  age: z.number().int().min(10).max(120).optional(),
+  gender: z.enum(["MALE", "FEMALE", "OTHER"]).optional(),
+  durationMin: z.number().int().min(15).max(120).optional(),
   trainingDaysPerWeek: z.number().int().min(1).max(7).optional(),
   cycleLengthWeeks: z.number().int().min(4).max(12).optional(),
   equipment: z
@@ -27,7 +30,8 @@ const updateSchema = z.object({
     .optional(),
   limitations: z
     .array(z.enum(["SHOULDER_PAIN", "KNEE_PAIN", "LOWER_BACK_PAIN", "WRIST_PAIN", "LOW_IMPACT_ONLY"]))
-    .optional()
+    .optional(),
+  excludedExercises: z.array(z.string()).optional()
 });
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -40,8 +44,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       where: { id },
       data: {
         goal: parsed.goal as Goal | undefined,
+        age: parsed.age,
+        gender: parsed.gender as Gender | undefined,
+        durationMin: parsed.durationMin,
         trainingDaysPerWeek: parsed.trainingDaysPerWeek,
-        cycleLengthWeeks: parsed.cycleLengthWeeks
+        cycleLengthWeeks: parsed.cycleLengthWeeks,
+        excludedExercises: parsed.excludedExercises
       }
     });
 
