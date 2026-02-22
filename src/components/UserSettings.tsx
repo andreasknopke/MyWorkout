@@ -138,6 +138,13 @@ export default function UserSettings({ user, onBack, onUserUpdated }: Props) {
 
   const markChanged = useCallback(() => setHasChanges(true), []);
 
+  // Handle video URL update (saved directly per exercise, not part of user profile)
+  const handleVideoUrlChanged = useCallback((exerciseId: string, slug: string, videoUrl: string | null) => {
+    setExercises((prev) =>
+      prev.map((ex) => (ex.id === exerciseId ? { ...ex, videoUrl } : ex))
+    );
+  }, []);
+
   // Filtered exercises
   const filteredExercises = useMemo(() => {
     let list = exercises;
@@ -253,6 +260,7 @@ export default function UserSettings({ user, onBack, onUserUpdated }: Props) {
               includedCount={includedCount}
               withVideoCount={withVideoCount}
               totalCount={exercises.length}
+              onVideoUrlChanged={handleVideoUrlChanged}
             />
           ) : (
             <ProfileTab
@@ -324,7 +332,8 @@ function ExercisesTab({
   movements,
   includedCount,
   withVideoCount,
-  totalCount
+  totalCount,
+  onVideoUrlChanged
 }: {
   exercises: ExerciseInfo[];
   allExercises: ExerciseInfo[];
@@ -339,6 +348,7 @@ function ExercisesTab({
   includedCount: number;
   withVideoCount: number;
   totalCount: number;
+  onVideoUrlChanged: (exerciseId: string, slug: string, videoUrl: string | null) => void;
 }) {
   if (loading) {
     return (
@@ -434,83 +444,13 @@ function ExercisesTab({
         {exercises.map((ex) => {
           const isExcluded = excludedSlugs.has(ex.slug);
           return (
-            <div
+            <ExerciseCard
               key={ex.slug}
-              className={`glass p-3 transition-all ${
-                isExcluded ? "opacity-50 border-red-500/20" : ""
-              }`}
-            >
-              <div className="flex items-start gap-3">
-                {/* Toggle */}
-                <button
-                  type="button"
-                  onClick={() => toggleExclusion(ex.slug)}
-                  className={`mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                    isExcluded
-                      ? "border-red-500/50 bg-red-500/10 text-red-400"
-                      : "border-brand-500/50 bg-brand-500/10 text-brand-400"
-                  }`}
-                  title={isExcluded ? "Einschließen" : "Ausschließen"}
-                >
-                  {isExcluded ? "✕" : "✓"}
-                </button>
-
-                {/* Exercise info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3
-                      className={`font-semibold text-sm ${
-                        isExcluded ? "line-through text-slate-500" : ""
-                      }`}
-                    >
-                      {ex.name}
-                    </h3>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-slate-400">
-                      {MOVEMENT_EMOJI[ex.movement] ?? "📌"}{" "}
-                      {MOVEMENT_LABELS[ex.movement as keyof typeof MOVEMENT_LABELS] ?? ex.movement}
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-slate-500 mt-0.5">{ex.primaryMuscle}</p>
-                  <p className="text-xs text-slate-600 mt-0.5 line-clamp-2">
-                    {ex.description}
-                  </p>
-
-                  {/* Equipment tags */}
-                  <div className="flex flex-wrap gap-1 mt-1.5">
-                    {ex.equipment.map((eq: string) => (
-                      <span
-                        key={eq}
-                        className="text-[10px] rounded-md bg-white/5 px-1.5 py-0.5 text-slate-500"
-                      >
-                        {EQUIPMENT_EMOJI[eq as EquipmentType] ?? "🔧"}{" "}
-                        {EQUIPMENT_LABELS[eq as EquipmentType] ?? eq}
-                      </span>
-                    ))}
-                    {/* Strain score */}
-                    <span className="text-[10px] rounded-md bg-white/5 px-1.5 py-0.5 text-slate-500">
-                      {"⚡".repeat(ex.strainScore)} Belastung {ex.strainScore}/5
-                    </span>
-                  </div>
-                </div>
-
-                {/* Video link */}
-                {ex.videoUrl && (
-                  <a
-                    href={ex.videoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-shrink-0 w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20
-                      flex items-center justify-center text-lg
-                      hover:bg-red-500/20 hover:border-red-500/40 transition-all
-                      active:scale-95"
-                    title="Video ansehen"
-                  >
-                    ▶️
-                  </a>
-                )}
-              </div>
-            </div>
+              exercise={ex}
+              isExcluded={isExcluded}
+              onToggleExclusion={() => toggleExclusion(ex.slug)}
+              onVideoUrlChanged={onVideoUrlChanged}
+            />
           );
         })}
 
@@ -520,6 +460,208 @@ function ExercisesTab({
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════
+   Exercise Card with inline video URL editing
+   ════════════════════════════════════════════════════════════ */
+function ExerciseCard({
+  exercise: ex,
+  isExcluded,
+  onToggleExclusion,
+  onVideoUrlChanged
+}: {
+  exercise: ExerciseInfo;
+  isExcluded: boolean;
+  onToggleExclusion: () => void;
+  onVideoUrlChanged: (exerciseId: string, slug: string, videoUrl: string | null) => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const [editingUrl, setEditingUrl] = useState(ex.videoUrl ?? "");
+  const [savingUrl, setSavingUrl] = useState(false);
+  const [urlMsg, setUrlMsg] = useState<string | null>(null);
+
+  const urlChanged = (editingUrl || "") !== (ex.videoUrl || "");
+
+  async function handleSaveUrl() {
+    setSavingUrl(true);
+    setUrlMsg(null);
+    try {
+      const newUrl = editingUrl.trim() || null;
+      const res = await fetch(`/api/exercises/${ex.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ videoUrl: newUrl })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.message ?? "Fehler");
+      onVideoUrlChanged(ex.id, ex.slug, newUrl);
+      setUrlMsg("✅");
+      setTimeout(() => setUrlMsg(null), 1500);
+    } catch (err) {
+      setUrlMsg(`❌ ${err instanceof Error ? err.message : "Fehler"}`);
+    } finally {
+      setSavingUrl(false);
+    }
+  }
+
+  function handleRemoveUrl() {
+    setEditingUrl("");
+  }
+
+  return (
+    <div
+      className={`glass p-3 transition-all ${
+        isExcluded ? "opacity-50 border-red-500/20" : ""
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        {/* Toggle inclusion */}
+        <button
+          type="button"
+          onClick={onToggleExclusion}
+          className={`mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+            isExcluded
+              ? "border-red-500/50 bg-red-500/10 text-red-400"
+              : "border-brand-500/50 bg-brand-500/10 text-brand-400"
+          }`}
+          title={isExcluded ? "Einschließen" : "Ausschließen"}
+        >
+          {isExcluded ? "✕" : "✓"}
+        </button>
+
+        {/* Exercise info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3
+              className={`font-semibold text-sm ${
+                isExcluded ? "line-through text-slate-500" : ""
+              }`}
+            >
+              {ex.name}
+            </h3>
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-slate-400">
+              {MOVEMENT_EMOJI[ex.movement] ?? "📌"}{" "}
+              {MOVEMENT_LABELS[ex.movement as keyof typeof MOVEMENT_LABELS] ?? ex.movement}
+            </span>
+          </div>
+
+          <p className="text-xs text-slate-500 mt-0.5">{ex.primaryMuscle}</p>
+          <p className="text-xs text-slate-600 mt-0.5 line-clamp-2">{ex.description}</p>
+
+          {/* Equipment tags */}
+          <div className="flex flex-wrap gap-1 mt-1.5">
+            {ex.equipment.map((eq: string) => (
+              <span
+                key={eq}
+                className="text-[10px] rounded-md bg-white/5 px-1.5 py-0.5 text-slate-500"
+              >
+                {EQUIPMENT_EMOJI[eq as EquipmentType] ?? "🔧"}{" "}
+                {EQUIPMENT_LABELS[eq as EquipmentType] ?? eq}
+              </span>
+            ))}
+            <span className="text-[10px] rounded-md bg-white/5 px-1.5 py-0.5 text-slate-500">
+              {"⚡".repeat(ex.strainScore)} Belastung {ex.strainScore}/5
+            </span>
+          </div>
+        </div>
+
+        {/* Video button + expand */}
+        <div className="flex flex-col items-center gap-1 flex-shrink-0">
+          {ex.videoUrl ? (
+            <a
+              href={ex.videoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20
+                flex items-center justify-center text-lg
+                hover:bg-red-500/20 hover:border-red-500/40 transition-all
+                active:scale-95"
+              title="Video ansehen"
+            >
+              ▶️
+            </a>
+          ) : (
+            <div
+              className="w-10 h-10 rounded-xl bg-white/5 border border-white/10
+                flex items-center justify-center text-lg opacity-30"
+              title="Kein Video"
+            >
+              🎬
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              setExpanded(!expanded);
+              setEditingUrl(ex.videoUrl ?? "");
+              setUrlMsg(null);
+            }}
+            className="text-[10px] text-slate-500 hover:text-brand-400 transition-colors"
+            title="Video-URL bearbeiten"
+          >
+            {expanded ? "▲" : "✏️"}
+          </button>
+        </div>
+      </div>
+
+      {/* Expanded: Video URL editor */}
+      {expanded && (
+        <div className="mt-2 pt-2 border-t border-white/5 animate-fade-in">
+          <label className="text-[10px] text-slate-500 uppercase tracking-wider mb-1 block">
+            YouTube Video-URL
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="url"
+              value={editingUrl}
+              onChange={(e) => setEditingUrl(e.target.value)}
+              placeholder="https://www.youtube.com/watch?v=..."
+              className="input-modern text-xs flex-1 py-2"
+            />
+            {editingUrl && (
+              <button
+                type="button"
+                onClick={handleRemoveUrl}
+                className="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/20
+                  flex items-center justify-center text-sm
+                  hover:bg-red-500/20 transition-all flex-shrink-0"
+                title="URL entfernen"
+              >
+                🗑️
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 mt-2">
+            <button
+              type="button"
+              onClick={handleSaveUrl}
+              disabled={!urlChanged || savingUrl}
+              className="btn-primary text-xs px-4 py-1.5 disabled:opacity-30"
+            >
+              {savingUrl ? "…" : "💾 Speichern"}
+            </button>
+
+            {editingUrl && (
+              <a
+                href={editingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-ghost text-xs px-3 py-1.5"
+              >
+                🔗 Testen
+              </a>
+            )}
+
+            {urlMsg && (
+              <span className="text-xs">{urlMsg}</span>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
